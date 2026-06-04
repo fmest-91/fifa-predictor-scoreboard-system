@@ -1104,7 +1104,6 @@ let state = {
 const elements = {
   statusText: document.getElementById("status-text"),
   statusBadge: document.getElementById("status-badge"),
-  btnSettings: document.getElementById("btn-settings"),
   btnSubmitPredictions: document.getElementById("btn-submit-predictions"),
   
   // Stats
@@ -1142,10 +1141,9 @@ const elements = {
   modalPlayerAccuracy: document.getElementById("modal-player-accuracy"),
   modalPredictionsContainer: document.getElementById("modal-predictions-container"),
   
-  // Settings Modal
+  // Settings Modal (elements kept for JS compatibility; modal is hidden)
   settingsModal: document.getElementById("settings-modal"),
   btnCloseSettings: document.getElementById("btn-close-settings"),
-  settingsForm: document.getElementById("settings-form"),
   settingsApiUrl: document.getElementById("settings-api-url"),
   settingsFormUrl: document.getElementById("settings-form-url"),
   btnSaveSettings: document.getElementById("btn-save-settings"),
@@ -1231,74 +1229,70 @@ function initMatchesFilters() {
 
 // Setup Modal Toggle Listeners
 function initModals() {
-  // Open Settings
-  elements.btnSettings.addEventListener("click", () => {
-    elements.settingsModal.classList.add("active");
-  });
+  // Settings button removed from UI — skip if not present
   
-  // Close Settings
-  elements.btnCloseSettings.addEventListener("click", () => {
-    elements.settingsModal.classList.remove("active");
-  });
+  // Close Settings (if modal somehow opened)
+  if (elements.btnCloseSettings) {
+    elements.btnCloseSettings.addEventListener("click", () => {
+      elements.settingsModal.classList.remove("active");
+    });
+  }
   
   // Close Player Modal
   elements.btnCloseModal.addEventListener("click", () => {
     elements.playerModal.classList.remove("active");
   });
   
-  // Click outside to close modals
+  // Click outside to close player modal
   window.addEventListener("click", (e) => {
-    if (e.target === elements.settingsModal) {
-      elements.settingsModal.classList.remove("active");
-    }
     if (e.target === elements.playerModal) {
       elements.playerModal.classList.remove("active");
     }
   });
   
-  // Save Settings
-  elements.btnSaveSettings.addEventListener("click", () => {
-    const url = elements.settingsApiUrl.value.trim();
-    const formUrl = elements.settingsFormUrl.value.trim();
-    
-    if (url) {
-      localStorage.setItem("fifa_predictor_api_url", url);
-      state.apiUrl = url;
-      state.isDemoMode = false;
-    }
-    
-    if (formUrl) {
-      localStorage.setItem("fifa_predictor_form_url", formUrl);
-      state.formUrl = formUrl;
-      elements.btnSubmitPredictions.href = formUrl;
-      elements.btnSubmitPredictions.style.display = "inline-flex";
-    } else {
-      localStorage.removeItem("fifa_predictor_form_url");
-      state.formUrl = "";
-      elements.btnSubmitPredictions.href = "#";
-    }
-    
-    loadSettings();
-    elements.settingsModal.classList.remove("active");
-    fetchData();
-  });
+  // Save Settings (hidden — guarded)
+  if (elements.btnSaveSettings) {
+    elements.btnSaveSettings.addEventListener("click", () => {
+      const url = elements.settingsApiUrl ? elements.settingsApiUrl.value.trim() : "";
+      const formUrl = elements.settingsFormUrl ? elements.settingsFormUrl.value.trim() : "";
+      
+      if (url) {
+        localStorage.setItem("fifa_predictor_api_url", url);
+        state.apiUrl = url;
+        state.isDemoMode = false;
+      }
+      
+      if (formUrl) {
+        localStorage.setItem("fifa_predictor_form_url", formUrl);
+        state.formUrl = formUrl;
+        elements.btnSubmitPredictions.href = formUrl;
+        elements.btnSubmitPredictions.style.display = "inline-flex";
+      } else {
+        localStorage.removeItem("fifa_predictor_form_url");
+        state.formUrl = "";
+        elements.btnSubmitPredictions.href = "#";
+      }
+      
+      loadSettings();
+      elements.settingsModal.classList.remove("active");
+      fetchData();
+    });
+  }
   
-  // Reset Settings to Demo Mode
-  elements.btnResetDemo.addEventListener("click", () => {
-    localStorage.removeItem("fifa_predictor_api_url");
-    localStorage.removeItem("fifa_predictor_form_url");
-    state.apiUrl = "";
-    state.formUrl = "";
-    state.isDemoMode = true;
-    
-    elements.settingsApiUrl.value = "";
-    elements.settingsFormUrl.value = "";
-    elements.btnSubmitPredictions.href = "#";
-    
-    loadSettings();
-    elements.settingsModal.classList.remove("active");
-    fetchData();
-  });
+  // Reset to Demo Mode (hidden — guarded)
+  if (elements.btnResetDemo) {
+    elements.btnResetDemo.addEventListener("click", () => {
+      localStorage.removeItem("fifa_predictor_api_url");
+      localStorage.removeItem("fifa_predictor_form_url");
+      state.apiUrl = DEFAULT_API_URL;
+      state.formUrl = DEFAULT_FORM_URL;
+      state.isDemoMode = false;
+      
+      loadSettings();
+      elements.settingsModal.classList.remove("active");
+      fetchData();
+    });
+  }
 }
 
 // Start lock-in countdown timer
