@@ -1084,11 +1084,16 @@ const MATCHES_LOCAL_DB = [
   }
 ];
 
+// ─── Hardcoded Defaults (apply to ALL viewers) ───────────────────────────────
+const DEFAULT_API_URL  = "https://script.google.com/macros/s/AKfycbzq9H6Bd0j53qefIhiR-fylYA4tkF5rSE-62GaN-FI3h9PbIXrUTp66oTrHfkMreUHq/exec";
+const DEFAULT_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeICq3uG1WGZoNn72KQ3pIgBNDtEhXuGURGrEFxAbIM87Aadg/viewform";
+// ─────────────────────────────────────────────────────────────────────────────
+
 // Global State
 let state = {
-  isDemoMode: true,
-  apiUrl: "",
-  formUrl: "",
+  isDemoMode: false,
+  apiUrl: DEFAULT_API_URL,
+  formUrl: DEFAULT_FORM_URL,
   leaderboard: [],
   matches: [],
   stats: {},
@@ -1163,11 +1168,12 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchData();
 });
 
-// Load Config from localStorage
+// Load Config from localStorage (falls back to hardcoded defaults for all viewers)
 function loadSettings() {
-  const savedApiUrl = localStorage.getItem("fifa_predictor_api_url");
-  const savedFormUrl = localStorage.getItem("fifa_predictor_form_url");
+  const savedApiUrl  = localStorage.getItem("fifa_predictor_api_url")  || DEFAULT_API_URL;
+  const savedFormUrl = localStorage.getItem("fifa_predictor_form_url") || DEFAULT_FORM_URL;
   
+  // API URL — always live unless explicitly cleared via Reset button
   if (savedApiUrl) {
     state.apiUrl = savedApiUrl;
     state.isDemoMode = false;
@@ -1176,13 +1182,13 @@ function loadSettings() {
     state.isDemoMode = true;
   }
   
+  // Form URL — always visible for all viewers
   if (savedFormUrl) {
     state.formUrl = savedFormUrl;
     elements.settingsFormUrl.value = savedFormUrl;
     elements.btnSubmitPredictions.href = savedFormUrl;
     elements.btnSubmitPredictions.style.display = "inline-flex";
   } else {
-    // Hide form button if not set
     elements.btnSubmitPredictions.href = "#";
   }
   
