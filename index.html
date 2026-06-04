@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
+  <title>FIFA World Cup 2026 Predictor & Live Scoreboard</title>
+  <meta name="description" content="Predict 2026 FIFA World Cup group stage matches, compete with friends, and track the live leaderboard standings in real-time.">
+  <meta name="keywords" content="FIFA World Cup 2026, Predictor, Live Scoreboard, Bracket, Group Stage, Soccer, Football">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://www.fifa.com/favicon.ico">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Style Sheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background decorative blobs -->
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+
+  <!-- Main Container -->
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-logo">
+        <span class="trophy-emoji">🏆</span>
+        <div>
+          <h1>FIFA WORLD CUP 2026</h1>
+          <p class="subtitle">Group Stage Predictor Standings</p>
+        </div>
+      </div>
+      
+      <!-- API Connection Status Badge -->
+      <div class="api-status-container">
+        <button id="btn-settings" class="btn btn-secondary" title="Configure Sheet API">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          <span>Setup Sheets</span>
+        </button>
+        <div id="status-badge" class="badge badge-demo">
+          <span class="status-dot"></span>
+          <span id="status-text">Demo Mode</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Banner & Countdown -->
+    <section class="banner-section card">
+      <div class="banner-grid">
+        <div class="banner-info">
+          <h2>Predict &amp; Dominate the Groups</h2>
+          <p>Compete to select the winning team or a draw for all 72 group stage matches. 1 correct choice = 1 point.</p>
+          <div class="banner-actions">
+            <a id="btn-submit-predictions" href="#" target="_blank" class="btn btn-primary">
+              <span>Submit Predictions</span>
+              <svg class="icon-small" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Countdown Widget -->
+        <div class="countdown-widget">
+          <span class="countdown-title">Lock-In Countdown</span>
+          <div class="countdown-timer" id="countdown-timer">
+            <div class="time-block">
+              <span class="time-num" id="cd-days">00</span>
+              <span class="time-label">Days</span>
+            </div>
+            <div class="time-block">
+              <span class="time-num" id="cd-hours">00</span>
+              <span class="time-label">Hrs</span>
+            </div>
+            <div class="time-block">
+              <span class="time-num" id="cd-mins">00</span>
+              <span class="time-label">Mins</span>
+            </div>
+            <div class="time-block">
+              <span class="time-num" id="cd-secs">00</span>
+              <span class="time-label">Secs</span>
+            </div>
+          </div>
+          <span class="countdown-date">Deadline: June 10, 2026 23:59</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Statistics Row -->
+    <section class="stats-overview-row">
+      <div class="stat-card card">
+        <span class="stat-label">Total Players</span>
+        <h3 id="stat-players">-</h3>
+      </div>
+      <div class="stat-card card">
+        <span class="stat-label">Matches Completed</span>
+        <h3 id="stat-completed">-</h3>
+      </div>
+      <div class="stat-card card">
+        <span class="stat-label">Avg. Score</span>
+        <h3 id="stat-avg-score">-</h3>
+      </div>
+      <div class="stat-card card">
+        <span class="stat-label">Leader</span>
+        <h3 id="stat-leader">-</h3>
+      </div>
+    </section>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-navigation">
+      <button class="tab-btn active" data-tab="leaderboard" id="tab-leaderboard-btn">
+        <svg class="icon-tab" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+        <span>Standings Leaderboard</span>
+      </button>
+      <button class="tab-btn" data-tab="matches" id="tab-matches-btn">
+        <svg class="icon-tab" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        <span>Matches Schedule</span>
+      </button>
+      <button class="tab-btn" data-tab="insights" id="tab-insights-btn">
+        <svg class="icon-tab" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+        <span>Prediction Insights</span>
+      </button>
+    </nav>
+
+    <!-- Tab Contents -->
+    <main class="tab-content-container">
+      
+      <!-- Leaderboard Tab -->
+      <section id="tab-leaderboard" class="tab-panel active">
+        <div class="card leaderboard-card">
+          <div class="table-container">
+            <table class="scoreboard-table" id="scoreboard-table">
+              <thead>
+                <tr>
+                  <th style="width: 80px; text-align: center;">Rank</th>
+                  <th>Player Name</th>
+                  <th style="width: 180px; text-align: center;">Correct Predictions</th>
+                  <th style="width: 140px; text-align: center;">Accuracy</th>
+                  <th style="width: 150px; text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-tbody">
+                <!-- Javascript will populate rows here -->
+                <tr>
+                  <td colspan="5" class="loading-state">Loading standings data...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Matches Tab -->
+      <section id="tab-matches" class="tab-panel">
+        
+        <!-- Filters Row -->
+        <div class="matches-filter-row card">
+          <div class="filter-group">
+            <label for="filter-group-select">Filter by Group:</label>
+            <select id="filter-group-select" class="form-control">
+              <option value="all">All Groups (A to L)</option>
+              <option value="A">Group A</option>
+              <option value="B">Group B</option>
+              <option value="C">Group C</option>
+              <option value="D">Group D</option>
+              <option value="E">Group E</option>
+              <option value="F">Group F</option>
+              <option value="G">Group G</option>
+              <option value="H">Group H</option>
+              <option value="I">Group I</option>
+              <option value="J">Group J</option>
+              <option value="K">Group K</option>
+              <option value="L">Group L</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label for="filter-status-select">Status:</label>
+            <select id="filter-status-select" class="form-control">
+              <option value="all">All Matches</option>
+              <option value="finished">Completed</option>
+              <option value="pending">Upcoming</option>
+            </select>
+          </div>
+
+          <div class="filter-group flex-right">
+            <span class="matches-count-label" id="matches-count-text">Showing 72 matches</span>
+          </div>
+        </div>
+
+        <!-- Matches Cards Grid -->
+        <div class="matches-grid" id="matches-cards-container">
+          <!-- Javascript will populate cards here -->
+        </div>
+      </section>
+
+      <!-- Insights Tab -->
+      <section id="tab-insights" class="tab-panel">
+        <div class="insights-grid">
+          
+          <!-- General Insights -->
+          <div class="card insights-card">
+            <h2>🏆 Most Popular Group Winners Predictions</h2>
+            <p class="card-subtitle">Aggregated predictions from all submitted brackets.</p>
+            <div class="insights-list" id="popular-predictions-list">
+              <!-- Dynamically populated -->
+              <p class="loading-state">Add players to view aggregate statistics...</p>
+            </div>
+          </div>
+          
+          <!-- Hardest Matches -->
+          <div class="card insights-card">
+            <h2>🔥 Match Prediction Consensus</h2>
+            <p class="card-subtitle">Top matches where predictions are highly split (unpredictable matches) or have total consensus.</p>
+            <div class="insights-list" id="consensus-matches-list">
+              <!-- Dynamically populated -->
+              <p class="loading-state">Submit predictions to calculate consensus...</p>
+            </div>
+          </div>
+          
+        </div>
+      </section>
+      
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>&copy; 2026 FIFA Predictor System. Pair programmed with Antigravity AI.</p>
+      <p class="footer-note">This dashboard handles group stage games. Calculations strictly enforce the June 10, 2026 lock deadline.</p>
+    </footer>
+
+  </div>
+
+  <!-- Player Details Modal (Sliding Right Drawer or Center Modal) -->
+  <div id="player-modal" class="modal-overlay">
+    <div class="modal-content card">
+      <button class="modal-close" id="btn-close-modal">&times;</button>
+      
+      <div class="modal-header">
+        <div class="player-avatar-large" id="modal-avatar">F</div>
+        <div>
+          <h2 id="modal-player-name">Player Predictions</h2>
+          <div class="modal-meta-row">
+            <span class="badge badge-rank" id="modal-player-rank">Rank #1</span>
+            <span class="badge badge-score" id="modal-player-points">12 Points</span>
+            <span class="badge badge-accuracy" id="modal-player-accuracy">85% Accuracy</span>
+          </div>
+        </div>
+      </div>
+      
+      <hr class="modal-divider">
+      
+      <h3 class="modal-section-title">Prediction Sheet (72 Matches)</h3>
+      <div class="modal-legend">
+        <span class="legend-item"><span class="color-dot dot-correct"></span> Correct</span>
+        <span class="legend-item"><span class="color-dot dot-incorrect"></span> Incorrect</span>
+        <span class="legend-item"><span class="color-dot dot-pending"></span> Upcoming / Pending</span>
+      </div>
+      
+      <div class="modal-predictions-list" id="modal-predictions-container">
+        <!-- Javascript will populate predictions details -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Configuration Modal -->
+  <div id="settings-modal" class="modal-overlay">
+    <div class="modal-content settings-content card">
+      <button class="modal-close" id="btn-close-settings">&times;</button>
+      
+      <h2>🏆 Connect Your Google Sheets API</h2>
+      <p class="settings-intro">To connect your live prediction league, enter the Google Apps Script Web App URL deployed from your Google Sheet.</p>
+      
+      <form id="settings-form" onsubmit="return false;">
+        <div class="form-group-block">
+          <label for="settings-api-url">Apps Script Web App URL:</label>
+          <input type="url" id="settings-api-url" class="form-control" placeholder="https://script.google.com/macros/s/.../exec" required>
+          <p class="form-help">Ensure you deployed the Apps Script as a Web App, executed as 'Me', with access set to 'Anyone'.</p>
+        </div>
+        
+        <div class="form-group-block">
+          <label for="settings-form-url">Google Form URL (For participants to submit predictions):</label>
+          <input type="url" id="settings-form-url" class="form-control" placeholder="https://docs.google.com/forms/d/e/.../viewform">
+          <p class="form-help">Add the public link to your Google Form so players can access it directly from the header button.</p>
+        </div>
+        
+        <div class="settings-actions">
+          <button id="btn-save-settings" class="btn btn-primary">Save and Connect</button>
+          <button id="btn-reset-demo" class="btn btn-secondary">Reset to Demo Mode</button>
+        </div>
+      </form>
+      
+      <div class="settings-guide">
+        <h3>How to setup your Google Sheet backend:</h3>
+        <ol>
+          <li>Create a new spreadsheet on Google Sheets.</li>
+          <li>Go to <strong>Extensions &gt; Apps Script</strong>.</li>
+          <li>Copy and paste the code from <code class="filepath">google-apps-script/Code.gs</code>.</li>
+          <li>Save and run the <code>initialSetup</code> function to build sheets and seed matches.</li>
+          <li>Run <code>generatePredictorForm</code> to generate the Google Form.</li>
+          <li>Click <strong>Deploy &gt; New deployment</strong>, choose <strong>Web App</strong>, set Executed as: <strong>Me</strong>, Who has access: <strong>Anyone</strong>, and copy the deployment URL!</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Javascript Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
