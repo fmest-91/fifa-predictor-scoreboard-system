@@ -42,13 +42,9 @@
       
       <!-- API Connection Status Badge -->
       <div class="api-status-container">
-        <button id="btn-settings" class="btn btn-secondary" title="Configure Sheet API">
-          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-          <span>Setup Sheets</span>
-        </button>
-        <div id="status-badge" class="badge badge-demo">
+        <div id="status-badge" class="badge badge-live">
           <span class="status-dot"></span>
-          <span id="status-text">Demo Mode</span>
+          <span id="status-text">Live</span>
         </div>
       </div>
     </header>
@@ -270,44 +266,14 @@
     </div>
   </div>
 
-  <!-- Settings Configuration Modal -->
-  <div id="settings-modal" class="modal-overlay">
+  <!-- Settings modal removed: API and Form URLs are hardcoded for all viewers -->
+  <div id="settings-modal" class="modal-overlay" style="display:none;">
     <div class="modal-content settings-content card">
       <button class="modal-close" id="btn-close-settings">&times;</button>
-      
-      <h2>🏆 Connect Your Google Sheets API</h2>
-      <p class="settings-intro">To connect your live prediction league, enter the Google Apps Script Web App URL deployed from your Google Sheet.</p>
-      
-      <form id="settings-form" onsubmit="return false;">
-        <div class="form-group-block">
-          <label for="settings-api-url">Apps Script Web App URL:</label>
-          <input type="url" id="settings-api-url" class="form-control" placeholder="https://script.google.com/macros/s/.../exec" required>
-          <p class="form-help">Ensure you deployed the Apps Script as a Web App, executed as 'Me', with access set to 'Anyone'.</p>
-        </div>
-        
-        <div class="form-group-block">
-          <label for="settings-form-url">Google Form URL (For participants to submit predictions):</label>
-          <input type="url" id="settings-form-url" class="form-control" placeholder="https://docs.google.com/forms/d/e/.../viewform">
-          <p class="form-help">Add the public link to your Google Form so players can access it directly from the header button.</p>
-        </div>
-        
-        <div class="settings-actions">
-          <button id="btn-save-settings" class="btn btn-primary">Save and Connect</button>
-          <button id="btn-reset-demo" class="btn btn-secondary">Reset to Demo Mode</button>
-        </div>
-      </form>
-      
-      <div class="settings-guide">
-        <h3>How to setup your Google Sheet backend:</h3>
-        <ol>
-          <li>Create a new spreadsheet on Google Sheets.</li>
-          <li>Go to <strong>Extensions &gt; Apps Script</strong>.</li>
-          <li>Copy and paste the code from <code class="filepath">google-apps-script/Code.gs</code>.</li>
-          <li>Save and run the <code>initialSetup</code> function to build sheets and seed matches.</li>
-          <li>Run <code>generatePredictorForm</code> to generate the Google Form.</li>
-          <li>Click <strong>Deploy &gt; New deployment</strong>, choose <strong>Web App</strong>, set Executed as: <strong>Me</strong>, Who has access: <strong>Anyone</strong>, and copy the deployment URL!</li>
-        </ol>
-      </div>
+      <input type="url" id="settings-api-url" style="display:none;">
+      <input type="url" id="settings-form-url" style="display:none;">
+      <button id="btn-save-settings" style="display:none;"></button>
+      <button id="btn-reset-demo" style="display:none;"></button>
     </div>
   </div>
 
