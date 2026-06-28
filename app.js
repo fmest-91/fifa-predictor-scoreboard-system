@@ -1474,18 +1474,6 @@ function loadDemoData() {
   renderAll();
 }
 
-/* First Place Banner Styling */
-.first-place-banner {
-  margin-top: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--gold);
-  background: linear-gradient(90deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05));
-  border-radius: 0.5rem;
-  text-align: center;
-  display: none; /* hidden until data loads */
-}
 
 // Master Render Call
 function renderAll() {
