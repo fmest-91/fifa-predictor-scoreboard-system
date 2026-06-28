@@ -1171,11 +1171,11 @@ function loadSettings() {
   const savedApiUrl  = localStorage.getItem("fifa_predictor_api_url")  || DEFAULT_API_URL;
   const savedFormUrl = localStorage.getItem("fifa_predictor_form_url") || DEFAULT_FORM_URL;
   
-  // API URL — always live unless explicitly cleared via Reset button
+  // API URL — always live unless explicitly cleared
   if (savedApiUrl) {
     state.apiUrl = savedApiUrl;
     state.isDemoMode = false;
-    elements.settingsApiUrl.value = savedApiUrl;
+    if (elements.settingsApiUrl) elements.settingsApiUrl.value = savedApiUrl;
   } else {
     state.isDemoMode = true;
   }
@@ -1183,7 +1183,7 @@ function loadSettings() {
   // Form URL — always visible for all viewers
   if (savedFormUrl) {
     state.formUrl = savedFormUrl;
-    elements.settingsFormUrl.value = savedFormUrl;
+    if (elements.settingsFormUrl) elements.settingsFormUrl.value = savedFormUrl;
     elements.btnSubmitPredictions.href = savedFormUrl;
     elements.btnSubmitPredictions.style.display = "inline-flex";
   } else {
@@ -1331,7 +1331,7 @@ function fetchData() {
     console.log("Loading Scoreboard Demo Mode Standings...");
     loadDemoData();
   } else {
-    elements.leaderboardTbody.innerHTML = `<tr><td colspan="5" class="loading-state">Connecting to Google Sheet API... Please wait.</td></tr>`;
+    elements.leaderboardTbody.innerHTML = `<tr><td colspan="5" class="loading-state">Connecting to live standings... Please wait.</td></tr>`;
     
     fetch(state.apiUrl)
       .then(response => response.json())
@@ -1347,14 +1347,12 @@ function fetchData() {
           
           renderAll();
         } else {
-          console.error("API error status:", data.message);
-          alert("Error fetching data from Sheets API: " + data.message + ". Reverting to demo mode.");
+          console.warn("API error:", data.message);
           loadDemoData();
         }
       })
       .catch(err => {
-        console.error("API fetch error:", err);
-        alert("Failed to connect to Google Sheets URL. Check CORS or URL deployment parameters. Reverting to demo mode.");
+        console.warn("API fetch failed (CORS or network):", err);
         loadDemoData();
       });
   }
@@ -1476,6 +1474,19 @@ function loadDemoData() {
   renderAll();
 }
 
+/* First Place Banner Styling */
+.first-place-banner {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gold);
+  background: linear-gradient(90deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05));
+  border-radius: 0.5rem;
+  text-align: center;
+  display: none; /* hidden until data loads */
+}
+
 // Master Render Call
 function renderAll() {
   renderStatistics();
@@ -1505,6 +1516,24 @@ function renderStatistics() {
 function renderLeaderboard() {
   elements.leaderboardTbody.innerHTML = "";
   
+  // After rendering leaderboard rows, update first place banner if competition is complete
+  const completedCount = state.matches.filter(m => m.finished).length;
+  if (state.leaderboard.length > 0 && completedCount === 72) {
+    const topPlayer = state.leaderboard[0];
+    const banner = document.getElementById('first-place-banner');
+    const nameEl = document.getElementById('champion-name');
+    const scoreEl = document.getElementById('champion-score');
+    
+    nameEl.textContent = `Congratulations to our Winner: ${topPlayer.name}!`;
+    scoreEl.textContent = `Winning with ${topPlayer.points} points.`;
+    banner.style.display = 'block';
+  } else {
+    const banner = document.getElementById('first-place-banner');
+    if (banner) {
+      banner.style.display = 'none';
+    }
+  }
+
   if (state.leaderboard.length === 0) {
     elements.leaderboardTbody.innerHTML = `<tr><td colspan="5" class="loading-state">No predictions submitted yet.</td></tr>`;
     return;
@@ -1629,8 +1658,7 @@ function renderMatchesList() {
       
       <!-- Hidden stats expansion panel -->
       <div class="match-stats-section" id="stats-panel-${m.id}">
-        <div class="stat-bar-container">
-          <div class="stat-bar-label">
+        <div class="stat-bar-label">
             <span>${m.home} Win</span>
             <span>${homePct}% (${stats.homeWins})</span>
           </div>
